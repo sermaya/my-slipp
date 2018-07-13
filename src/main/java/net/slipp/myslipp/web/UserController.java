@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping(value = "/users", method = RequestMethod.GET)
+@RequestMapping("/users")
 public class UserController {
 
     private List<User> users = new ArrayList<User>();
@@ -40,7 +40,7 @@ public class UserController {
         }
 
         System.out.println("Login Success!");
-        session.setAttribute("user", user);
+        session.setAttribute("session_user", user);
 
         return "redirect:/";
     }
@@ -48,7 +48,7 @@ public class UserController {
     @GetMapping("/logout")
     public String logout(HttpSession session){
         //세션을 제거한다.
-        session.removeAttribute("user");
+        session.removeAttribute("session_user");
         System.out.println("logout success");
         return "redirect:/";
     }
@@ -73,16 +73,36 @@ public class UserController {
     }
 
     @GetMapping("/{id}/form")
-    public String updateForm(@PathVariable Long id, Model model){
+    public String updateForm(@PathVariable Long id, Model model, HttpSession session){
+        Object tempUser = session.getAttribute("session_user");
+        if (tempUser == null) {
+            return "redirect:/users/loginForm";
+        }
+
+        User session_user = (User)tempUser;
+        if(!id.equals(session_user.getId())){
+            throw new IllegalStateException("자신의 정보만 수정할 수 있습니다.");
+        }
+
         User user = userRepository.getOne(id);
         model.addAttribute("user", user);
         return "/user/updateForm";
     }
 
     @PutMapping("/{id}")
-    public String update(@PathVariable Long id, User newUser){
+    public String update(@PathVariable Long id, User updatedUser, HttpSession session){
+        Object tempUser = session.getAttribute("session_user");
+        if (tempUser == null) {
+            return "redirect:/users/loginForm";
+        }
+
+        User session_user = (User)tempUser;
+        if(!id.equals(session_user.getId())){
+            throw new IllegalStateException("자신의 정보만 수정할 수 있습니다.");
+        }
+
         User user = userRepository.getOne(id);
-        user.update(newUser);
+        user.update(updatedUser);
         userRepository.save(user);
         return "redirect:/users";
     }
