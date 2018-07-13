@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping(value = "/users", method = RequestMethod.GET)
 public class UserController {
 
     private List<User> users = new ArrayList<User>();
@@ -42,6 +42,14 @@ public class UserController {
         System.out.println("Login Success!");
         session.setAttribute("user", user);
 
+        return "redirect:/";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session){
+        //세션을 제거한다.
+        session.removeAttribute("user");
+        System.out.println("logout success");
         return "redirect:/";
     }
 

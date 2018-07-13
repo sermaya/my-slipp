@@ -1,0 +1,2 @@
+INSERT INTO USER(ID, USER_ID, PASSWORD, NAME, EMAIL) VALUES(NULL, 'JUNELEE', 'test', '이준', 'juni95@empasl.com');
+INSERT INTO USER(ID, USER_ID, PASSWORD, NAME, EMAIL) VALUES(NULL, 'sanym', '1234', '샌님', 'sanym1@empal.com');

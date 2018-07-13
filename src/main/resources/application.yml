@@ -1,6 +1,7 @@
 spring:
   mustache:
     suffix: .html
+    expose-session-attributes: true
   h2:
     console:
       enabled: true
