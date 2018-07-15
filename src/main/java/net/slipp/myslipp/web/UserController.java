@@ -34,13 +34,14 @@ public class UserController {
             return "redirect:/users/loginForm";
         }
 
-        if (!password.equals(user.getPassword())) {
+        //if (!password.equals(user.getPassword())) {
+        if (!user.matchPassword(password)) {
             System.out.println("Login Failed");
             return "redirect:/users/loginForm";
         }
 
         System.out.println("Login Success!");
-        session.setAttribute("session_user", user);
+        session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, user);
 
         return "redirect:/";
     }
@@ -48,7 +49,7 @@ public class UserController {
     @GetMapping("/logout")
     public String logout(HttpSession session){
         //세션을 제거한다.
-        session.removeAttribute("session_user");
+        session.removeAttribute(HttpSessionUtils.USER_SESSION_KEY);
         System.out.println("logout success");
         return "redirect:/";
     }
@@ -74,13 +75,14 @@ public class UserController {
 
     @GetMapping("/{id}/form")
     public String updateForm(@PathVariable Long id, Model model, HttpSession session){
-        Object tempUser = session.getAttribute("session_user");
-        if (tempUser == null) {
+        Object tempUser = session.getAttribute(HttpSessionUtils.USER_SESSION_KEY);
+        if (!HttpSessionUtils.isLoginUser(session)) {
             return "redirect:/users/loginForm";
         }
 
-        User session_user = (User)tempUser;
-        if(!id.equals(session_user.getId())){
+        User session_user = HttpSessionUtils.getUserFromSession(session); //(User)tempUser;
+        //if(!id.equals(session_user.getId())){
+        if(!session_user.matchId(id)){
             throw new IllegalStateException("자신의 정보만 수정할 수 있습니다.");
         }
 
@@ -91,13 +93,14 @@ public class UserController {
 
     @PutMapping("/{id}")
     public String update(@PathVariable Long id, User updatedUser, HttpSession session){
-        Object tempUser = session.getAttribute("session_user");
+        Object tempUser = session.getAttribute(HttpSessionUtils.USER_SESSION_KEY);
         if (tempUser == null) {
             return "redirect:/users/loginForm";
         }
 
-        User session_user = (User)tempUser;
-        if(!id.equals(session_user.getId())){
+        User session_user = HttpSessionUtils.getUserFromSession(session);
+        //if(!id.equals(session_user.getId())){
+        if(!session_user.matchId(id)){
             throw new IllegalStateException("자신의 정보만 수정할 수 있습니다.");
         }
 

@@ -69,4 +69,21 @@ public class User {
         this.name = newUser.name;
         this.email = newUser.email;
     }
+
+    //password 비교
+    public boolean matchPassword(String newPassword){
+        if (newPassword == null){
+            return false;
+        }
+        return newPassword.equals(password);
+    }
+
+    //아이디 비교
+    public boolean matchId(Long newId){
+        if (newId == null){
+            return false;
+        }
+
+        return newId.equals(id);
+    }
 }
