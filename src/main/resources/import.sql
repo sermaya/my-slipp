@@ -1,2 +1,4 @@
-INSERT INTO USER(ID, USER_ID, PASSWORD, NAME, EMAIL) VALUES(NULL, 'JUNELEE', 'test', '이준', 'juni95@empasl.com');
-INSERT INTO USER(ID, USER_ID, PASSWORD, NAME, EMAIL) VALUES(NULL, 'sanym', '1234', '샌님', 'sanym1@empal.com');
+INSERT INTO USER(ID, USER_ID, PASSWORD, NAME, EMAIL) VALUES(1, 'JUNELEE', 'test', '이준', 'juni95@empasl.com');
+INSERT INTO USER(ID, USER_ID, PASSWORD, NAME, EMAIL) VALUES(2, 'sanym', '1234', '샌님', 'sanym1@empal.com');
+
+INSERT INTO qUESTION(ID, WRITER_ID, TITLE, CONTENTS, CREATE_DATE) VALUES(1, 1, '국내에서 RUBY ON RAILS가 활성화되지 힘든 이유는 뭘까', '모르겠습니다.', CURRENT_TIMESTAMP());
