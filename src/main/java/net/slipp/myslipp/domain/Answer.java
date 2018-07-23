@@ -1,38 +1,33 @@
 package net.slipp.myslipp.domain;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Entity
-public class Question {
+public class Answer {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
-    private String title;
+
+    //answer는 question에 ManyToOne
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
 
     @Lob
     private String contents;
     private LocalDateTime createDate;
 
-    @OneToMany(mappedBy = "question")
-    @OrderBy("id ASC")
-    private List<Answer> answers;
+    public Answer(){    }
 
-    public Question(){}
-
-    public Question(User writer, String title, String contents) {
-        super();
+    public Answer(User writer, Question question, String contents) {
         this.writer = writer;
-        this.title = title;
+        this.question = question;
         this.contents = contents;
         this.createDate = LocalDateTime.now();
     }
@@ -42,6 +37,31 @@ public class Question {
             return "";
         }
         return createDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Answer)) return false;
+
+        Answer answer = (Answer) o;
+
+        return id.equals(answer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+                "id=" + id +
+                ", writer=" + writer +
+                ", contents='" + contents + '\'' +
+                ", createDate=" + createDate +
+                '}';
     }
 
     public Long getId() {
@@ -60,14 +80,6 @@ public class Question {
         this.writer = writer;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
@@ -84,20 +96,5 @@ public class Question {
         this.createDate = createDate;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
-    }
 
-    public void setAnswers(List<Answer> answers) {
-        this.answers = answers;
-    }
-
-    public void update(String title, String contents) {
-        this.title = title;
-        this.contents = contents;
-    }
-
-    public boolean isSameWriter(User loginUser) {
-        return this.writer.equals(loginUser);
-    }
 }

@@ -1,8 +1,6 @@
 package net.slipp.myslipp.web;
 
-import net.slipp.myslipp.domain.Question;
-import net.slipp.myslipp.domain.QuestionRepository;
-import net.slipp.myslipp.domain.User;
+import net.slipp.myslipp.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +12,9 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/questions")
 public class QuestionController{
+
+    @Autowired
+    private AnswerRepository answerRepository;
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -53,62 +54,94 @@ public class QuestionController{
 
     @GetMapping("/{id}/form")
     public String updateForm(@PathVariable Long id, Model model, HttpSession session){
-        //로그인 여부 체크
-        if (!HttpSessionUtils.isLoginUser(session)){
-            return "/users/loginForm";
-        }
-
-        //세션에서 사용자 정보를 조회
-        User loginUser = HttpSessionUtils.getUserFromSession(session);
         Question question = questionRepository.getOne(id);
-
-        //로그인한 사용자가 글쓴 사람과 일치하는지 체크
-        if (!question.isSameWriter(loginUser)){
-            return "/users/loginForm";
+        Result result = valid(session, question);
+        if(!result.isValid()){
+            model.addAttribute("errorMessage", result.getErrorMessage());
+            return "/user/login";
         }
 
         model.addAttribute("question", question);
-        return "/qna/updateForm";
+        return "qna/updateForm";
+    }
+
+    private Result valid(HttpSession session, Question question){
+        //로그인 여부 체크
+        if (!HttpSessionUtils.isLoginUser(session)){
+            return Result.fail("로그인이 필요합니다.");
+        }
+
+        User loginUser = HttpSessionUtils.getUserFromSession(session);
+        if (!question.isSameWriter(loginUser)){
+            return Result.fail("자신이 쓴 글만 수정, 삭제가 가능합니다.");
+        }
+
+        return Result.ok();
+    }
+
+    private boolean hasPermission(HttpSession session, Question question){
+        //로그인 여부 체크
+        if (!HttpSessionUtils.isLoginUser(session)){
+            throw new IllegalStateException("로그인이 필요합니다.");
+        }
+
+        User loginUser = HttpSessionUtils.getUserFromSession(session);
+        if (!question.isSameWriter(loginUser)){
+            throw new IllegalStateException("자신이 쓴 글만 수정, 삭제가 가능합니다.");
+        }
+
+        return true;
     }
 
     @PutMapping("{id}")
-    public String update(@PathVariable Long id, String title, String contents, HttpSession session){
-        //로그인 여부 체크
-        if (!HttpSessionUtils.isLoginUser(session)){
-            return "/users/loginForm";
-        }
-
-        //세션에서 사용자 정보를 조회
-        User loginUser = HttpSessionUtils.getUserFromSession(session);
+    public String update(@PathVariable Long id, String title, String contents, Model model, HttpSession session){
         Question question = questionRepository.getOne(id);
-
-        //로그인한 사용자가 글쓴 사람과 일치하는지 체크
-        if (!question.isSameWriter(loginUser)){
-            return "/users/loginForm";
+        Result result = valid(session, question);
+        if(!result.isValid()){
+            model.addAttribute("errorMessage", result.getErrorMessage());
+            return "/user/login";
         }
 
         question.update(title, contents);
         questionRepository.save(question);
         return String.format("redirect:/questions/%d", id);
+
+        /*
+        try {
+            Question question = questionRepository.getOne(id);
+            hasPermission(session, question);
+            question.update(title, contents);
+            questionRepository.save(question);
+            return String.format("redirect:/questions/%d", id);
+        } catch (IllegalStateException e){
+            model.addAttribute("errorMessage", e.getMessage());
+            return "/user/login";
+        }
+        */
     }
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id, HttpSession session){
-        //로그인 여부 체크
-        if (!HttpSessionUtils.isLoginUser(session)){
-            return "/users/loginForm";
-        }
-
-        //세션에서 사용자 정보를 조회
-        User loginUser = HttpSessionUtils.getUserFromSession(session);
+    public String delete(@PathVariable Long id, Model model, HttpSession session){
         Question question = questionRepository.getOne(id);
-
-        //로그인한 사용자가 글쓴 사람과 일치하는지 체크
-        if (!question.isSameWriter(loginUser)){
-            return "/users/loginForm";
+        Result result = valid(session, question);
+        if(!result.isValid()){
+            model.addAttribute("errorMessage", result.getErrorMessage());
+            return "/user/login";
         }
 
         questionRepository.deleteById(id);
         return "redirect:/";
+
+        /*
+        try {
+            Question question = questionRepository.getOne(id);
+            hasPermission(session, question);
+            questionRepository.deleteById(id);
+            return "redirect:/";
+        } catch (IllegalStateException e){
+            model.addAttribute("errorMessage", e.getMessage());
+            return "/user/login";
+        }
+        */
     }
 }
