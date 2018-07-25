@@ -1,6 +1,12 @@
 package net.slipp.myslipp.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -9,7 +15,8 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class Question {
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class Question implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +31,7 @@ public class Question {
     private LocalDateTime createDate;
 
     @OneToMany(mappedBy = "question")
-    @OrderBy("id ASC")
+    @OrderBy("id DESC")
     private List<Answer> answers;
 
     public Question(){}

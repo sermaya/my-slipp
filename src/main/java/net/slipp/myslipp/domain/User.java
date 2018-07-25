@@ -1,10 +1,16 @@
 package net.slipp.myslipp.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.annotation.Generated;
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-public class User {
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class User implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
@@ -12,6 +18,7 @@ public class User {
     @Column(nullable = false, length = 20, unique = true)
     private String userId;
 
+    @JsonIgnore
     private String password;
     private String name;
     private String email;

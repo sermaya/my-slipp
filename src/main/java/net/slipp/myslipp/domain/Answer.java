@@ -1,11 +1,17 @@
 package net.slipp.myslipp.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Entity
-public class Answer {
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class Answer implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
@@ -21,6 +27,7 @@ public class Answer {
 
     @Lob
     private String contents;
+
     private LocalDateTime createDate;
 
     public Answer(){    }
