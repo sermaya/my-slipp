@@ -27,10 +27,21 @@ function onError(){
 function onSuccess(data, status){
     console.log(data);
     var answerTemplate = $("#answerTemplate").html();
-    var template = answerTemplate.format(data.writer.userId, data.formattedCreateDate, data.contents, data.id, data.id);
+    var template = answerTemplate.format(data.writer.userId, data.formattedCreateDate, data.contents, data.id);
     $(".qna-comment-slipp-articles").prepend(template);
 
     $("textarea[name=contents]").val("");
+}
+
+//답글 삭제 기능
+$(".link-delete-article").click(deleteAnswer)
+
+function deleteAnswer(e){
+    e.preventDefault();
+
+    var url = $(this).attr("href");
+    console.log("url : " + url);
+
 }
 
 //tempalate에 데이터 매칭함수
