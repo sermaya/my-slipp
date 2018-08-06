@@ -103,5 +103,7 @@ public class Answer implements Serializable {
         this.createDate = createDate;
     }
 
-
+    public boolean isSameWriter(User loginUser) {
+        return loginUser.equals(this.writer);
+    }
 }

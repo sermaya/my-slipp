@@ -27,20 +27,32 @@ function onError(){
 function onSuccess(data, status){
     console.log(data);
     var answerTemplate = $("#answerTemplate").html();
-    var template = answerTemplate.format(data.writer.userId, data.formattedCreateDate, data.contents, data.id);
+    var template = answerTemplate.format(data.writer.userId, data.formattedCreateDate, data.contents, data.question.id, data.id);
     $(".qna-comment-slipp-articles").prepend(template);
 
     $("textarea[name=contents]").val("");
 }
 
 //답글 삭제 기능
-$(".link-delete-article").click(deleteAnswer)
+$("a.link-delete-article").click(deleteAnswer);
 
 function deleteAnswer(e){
     e.preventDefault();
 
     var url = $(this).attr("href");
     console.log("url : " + url);
+
+    $.ajax({
+        type : 'delete',
+        url : url,
+        dataType : 'json',
+        error : function(xhr, status){
+            console.log("error");
+        },
+        success : function(data, status){
+            console.log(data);
+        }
+    })
 
 }
 
