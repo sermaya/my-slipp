@@ -6,10 +6,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
 
 @RestController
 @RequestMapping("/api/questions/{questionId}/answers")
 public class ApiAnswerController {
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private QuestionRepository questionRepository;

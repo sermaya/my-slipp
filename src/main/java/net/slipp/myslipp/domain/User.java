@@ -61,6 +61,7 @@ public class User implements Serializable {
         return email;
     }
 
+    /*
     @Override
     public String toString() {
         return "User{" +
@@ -70,6 +71,7 @@ public class User implements Serializable {
                 ", email='" + email + '\'' +
                 '}';
     }
+    */
 
     public void update(User newUser) {
         this.password = newUser.password;

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
+@Entity //이 클래스를 테이블과 매핑한다고 JPA에게 알려준다.이렇게 @Entity가 사용된 클래스를 엔테테 클래스라고 한다.
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Question implements Serializable {
     @Id
@@ -32,6 +32,7 @@ public class Question implements Serializable {
 
     @OneToMany(mappedBy = "question")
     @OrderBy("id DESC")
+    @JsonBackReference
     private List<Answer> answers;
 
     public Question(){}
@@ -106,5 +107,15 @@ public class Question implements Serializable {
 
     public boolean isSameWriter(User loginUser) {
         return this.writer.equals(loginUser);
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id = " + id +
+                ", writer = " + writer +
+                ", title = " + title +
+                ", contents = " + contents +
+                "}";
     }
 }

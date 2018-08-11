@@ -2,6 +2,7 @@ package net.slipp.myslipp.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -22,7 +23,8 @@ public class Answer implements Serializable {
 
     //answer는 question에 ManyToOne
     @ManyToOne
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_question"))
+    @JsonManagedReference
     private Question question;
 
     @Lob
@@ -66,6 +68,7 @@ public class Answer implements Serializable {
         return "Answer{" +
                 "id=" + id +
                 ", writer=" + writer +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", createDate=" + createDate +
                 '}';
@@ -85,6 +88,14 @@ public class Answer implements Serializable {
 
     public void setWriter(User writer) {
         this.writer = writer;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public String getContents() {
