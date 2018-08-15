@@ -30,15 +30,17 @@ function onSuccess(data, status){
     var template = answerTemplate.format(data.writer.userId, data.formattedCreateDate, data.contents, data.question.id, data.id);
     $(".qna-comment-slipp-articles").prepend(template);
 
+    $(".link-delete-article").click(deleteAnswer);
     $("textarea[name=contents]").val("");
 }
 
 //답글 삭제 기능
-$("a.link-delete-article").click(deleteAnswer);
+$(".link-delete-article").click(deleteAnswer);
 
 function deleteAnswer(e){
     e.preventDefault();
 
+    var deleteBtn = $(this);
     var url = $(this).attr("href");
     console.log("url : " + url);
 
@@ -51,9 +53,14 @@ function deleteAnswer(e){
         },
         success : function(data, status){
             console.log(data);
+            if (data.valid){
+                deleteBtn.closest("article").remove();
+            }
+            else {
+                alert(data.errorMessage);
+            }
         }
     })
-
 }
 
 //tempalate에 데이터 매칭함수
