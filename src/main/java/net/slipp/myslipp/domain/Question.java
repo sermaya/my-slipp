@@ -16,11 +16,7 @@ import java.util.Objects;
 
 @Entity //이 클래스를 테이블과 매핑한다고 JPA에게 알려준다.이렇게 @Entity가 사용된 클래스를 엔테테 클래스라고 한다.
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Question implements Serializable {
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long id;
-
+public class Question extends AbstractEntity implements Serializable {
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
@@ -28,7 +24,8 @@ public class Question implements Serializable {
 
     @Lob
     private String contents;
-    private LocalDateTime createDate;
+
+    private  Integer countOfAnswer = 0;
 
     @OneToMany(mappedBy = "question")
     @OrderBy("id DESC")
@@ -42,22 +39,6 @@ public class Question implements Serializable {
         this.writer = writer;
         this.title = title;
         this.contents = contents;
-        this.createDate = LocalDateTime.now();
-    }
-
-    public String getFormattedCreateDate(){
-        if (createDate == null){
-            return "";
-        }
-        return createDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"));
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public User getWriter() {
@@ -84,20 +65,20 @@ public class Question implements Serializable {
         this.contents = contents;
     }
 
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(LocalDateTime createDate) {
-        this.createDate = createDate;
-    }
-
     public List<Answer> getAnswers() {
         return answers;
     }
 
     public void setAnswers(List<Answer> answers) {
         this.answers = answers;
+    }
+
+    public Integer getCountOfAnswer() {
+        return countOfAnswer;
+    }
+
+    public void setCountOfAnswer(Integer countOfAnswer) {
+        this.countOfAnswer = countOfAnswer;
     }
 
     public void update(String title, String contents) {
@@ -112,10 +93,20 @@ public class Question implements Serializable {
     @Override
     public String toString() {
         return "Question{" +
-                "id = " + id +
+                "id = " + getId() +
                 ", writer = " + writer +
                 ", title = " + title +
                 ", contents = " + contents +
                 "}";
     }
+
+    public void addAnswer() {
+        this.countOfAnswer += 1;
+    }
+
+    public void deleteAnswer() {
+        this.countOfAnswer -= 1;
+    }
+
+
 }

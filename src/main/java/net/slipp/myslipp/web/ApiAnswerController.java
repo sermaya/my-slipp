@@ -31,6 +31,7 @@ public class ApiAnswerController {
         User loginUser = HttpSessionUtils.getUserFromSession(session);
         Question question = questionRepository.getOne(questionId);
         Answer answer = new Answer(loginUser, question, contents);
+        question.addAnswer();
         return answerRepository.save(answer);
     }
 
@@ -48,6 +49,10 @@ public class ApiAnswerController {
         }
 
         answerRepository.deleteById(id);
+
+        Question question = questionRepository.getOne(questionId);
+        question.deleteAnswer();
+        questionRepository.save(question);
         return Result.ok();
     }
 }

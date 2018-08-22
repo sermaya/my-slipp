@@ -10,11 +10,7 @@ import java.io.Serializable;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class User implements Serializable {
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long id;
-
+public class User extends AbstractEntity implements Serializable {
     @Column(nullable = false, length = 20, unique = true)
     private String userId;
 
@@ -22,8 +18,6 @@ public class User implements Serializable {
     private String password;
     private String name;
     private String email;
-
-    public void setId(Long id) { this.id = id; }
 
     public void setUserId(String userId) {
         this.userId = userId;
@@ -39,10 +33,6 @@ public class User implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getUserId() {
@@ -93,21 +83,6 @@ public class User implements Serializable {
             return false;
         }
 
-        return newId.equals(id);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-
-        User user = (User) o;
-
-        return getId().equals(user.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getId().hashCode();
+        return newId.equals(getId());
     }
 }
